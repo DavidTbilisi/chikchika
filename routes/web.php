@@ -26,10 +26,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+
+
     Route::get('/tokens/create', function (Request $request) {
         $token = $request->user()->createToken($request->token_name);
         return ['token' => $token->plainTextToken];
     });
+
+
+
 });
 
 require __DIR__.'/auth.php';
