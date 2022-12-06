@@ -42,34 +42,36 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-
+    // TODO: tweets
     // user has many tweets
-    public function tweets()
+    public function tweets(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Tweet::class);
     }
 
+    // TODO: add a relationship to the user's comments
     // user has many comments
-    public function comments()
+    public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
     // user has many likes
-    public function likes()
+    // TODO: add likes
+    public function likes(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Like::class);
     }
 
     // user has many followers
-    public function followers()
+    public function followers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_user_id');
     }
 
-    // user has many followings
-    public function followings()
+    // user has many following
+    public function following(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
+        return $this->belongsToMany(User::class, 'follows', 'user_id', 'follow_user_id');
     }
 }
