@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/tokens/create', function (Request $request) {
         $token = $request->user()->createToken($request->token_name);
         return ['token' => $token->plainTextToken];
-    });
+    })->name('tokens.create');
 
 
 
