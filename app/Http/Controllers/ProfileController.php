@@ -3,12 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
 class ProfileController extends Controller
 {
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function me()    :JsonResponse
+    {
+        return response()->json(auth()->user());
+    }
+
     /**
      * Display the user's profile form.
      *
@@ -21,6 +35,7 @@ class ProfileController extends Controller
             'user' => $request->user(),
         ]);
     }
+
 
     /**
      * Update the user's profile information.
@@ -64,5 +79,22 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function following( Request $request ): JsonResponse
+    {
+        $user = User::find( $request->user()->id );
+        $following = $user->following()->get();
+        return response()->json( $following );
+    }
+
+    public function followers( Request $request ): JsonResponse
+    {
+        $user = User::find( $request->user()->id );
+        $followers = $user->followers()->get();
+        return response()->json( $followers );
+    }
+
+
+
 }
 
