@@ -27,5 +27,9 @@ class Tweet extends Model
         return $this->hasMany(Like::class);
     }
 
-
+    // is tweet liked by user
+    public function isLikedBy($user_id)
+    {
+        return $this->likes->where('user_id', $user_id)->count() > 0;
+    }
 }

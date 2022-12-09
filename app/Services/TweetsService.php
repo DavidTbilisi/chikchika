@@ -7,27 +7,28 @@ class TweetsService
 {
     public function getTweets($user_id)
     {
-        // get all tweets from users that the logged-in user is following
-        $following_tweets = Tweet::whereIn('user_id', function($query) use ($user_id) {
-            $query->select('follows.follow_user_id')
-                ->from('follows')
-                ->where('follows.user_id', $user_id);
-        })->with('user')
-            ->with('likes')
-            ->with('comments')
-            ->get();
 
-        // get users where user privacy is public id
-        $public_tweets = Tweet::where('user_id', function($query) {
-            $query->select('users.id')
+        // sql query to get tweets from
+        // users that the current user follows
+        // and the current user
+        // and from public users
+        $tweets = Tweet::where('user_id', $user_id)
+            ->orWhereIn('user_id', function ($query) use ($user_id) {
+                $query->select('follow_user_id')
+                    ->from('follows')
+                    ->where('user_id', $user_id);
+            })
+            ->orWhereIn('user_id',function($query) {
+                $query->select('users.id')
                 ->from('users')
                 ->where('users.privacy', 'public');
-        })->with('user')
+            })
+            ->with('user')
             ->with('likes')
             ->with('comments')
+            ->orderBy('created_at', 'desc')
             ->get();
-
-        return $following_tweets->merge($public_tweets);
+        return $tweets;
     }
 
     public function getTweetsByUser($user_id)
@@ -126,6 +127,8 @@ class TweetsService
             ->with('user')
             ->get();
     }
+
+
 
 
 }
