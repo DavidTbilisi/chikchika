@@ -29,9 +29,21 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // tweet feed
-    Route::get('/tweets', [TweetController::class, 'index'])->name('tweets.index');
-
+    // tweets route group
+    Route::group(['prefix' => 'tweets'], function () {
+        Route::name("tweets.")->group(function () {
+            Route::get('/', [TweetController::class, 'index'])->name('index');
+            Route::get('/create', [TweetController::class, 'create'])->name('create');
+            Route::post('/', [TweetController::class, 'store'])->name('store');
+            Route::get('/{tweet}', [TweetController::class, 'show'])->name('show');
+            Route::get('/{tweet}/edit', [TweetController::class, 'edit'])->name('edit');
+            Route::patch('/{tweet}', [TweetController::class, 'update'])->name('update');
+            Route::delete('/{tweet}', [TweetController::class, 'destroy'])->name('destroy');
+            // like and unlike
+            Route::post('/{tweet}/like', [TweetController::class, 'like'])->name('like');
+            Route::delete('/{tweet}/unlike', [TweetController::class, 'unlike'])->name('unlike');
+        });
+    });
 
     Route::get('/tokens/create', function (Request $request) {
         $token = $request->user()->createToken($request->token_name);

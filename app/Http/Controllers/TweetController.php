@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tweet;
+use App\Services\TweetsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -21,7 +22,7 @@ class TweetController extends Controller
     }
 
 
-    public function store(Request $request) : JsonResponse
+    public function store(Request $request)
     {
         // validate tweet body
         $validated = $request->validate([
@@ -32,14 +33,18 @@ class TweetController extends Controller
         $tweet->user_id = auth()->user()->id;
         $tweet->body = $validated['body'];
         $tweet->save();
-
-        return response()->json($tweet, 201);
+        if ($request->isAPI) {
+            return response()->json($tweet, 201);
+        }
+        return redirect()->route('tweets.show', $tweet);
     }
 
 
     public function show(Tweet $tweet)
     {
-        //
+        // get Tweet with comment and likes
+        $tweet = Tweet::with(['comments', 'likes'])->find($tweet->id);
+        return view("tweets.show", ["tweet" => $tweet]);
     }
 
 
@@ -59,4 +64,18 @@ class TweetController extends Controller
     {
         //
     }
+
+    public function like(TweetsService $tweetsService, Tweet $tweet)
+    {
+        $user_id = auth()->user()->id;
+        if ($tweet->isLikedBy($user_id)) {
+            $tweetsService->unlikeTweet($user_id, $tweet->id );
+        } else {
+            $tweetsService->likeTweet($user_id, $tweet->id);
+        }
+
+        return redirect()->route('tweets.show', $tweet);
+    }
+
+
 }

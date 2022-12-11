@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Like extends Model
 {
     use HasFactory;
+    public $fillable = ['user_id', 'tweet_id'];
 
     // like belongs to user
     public function user()
