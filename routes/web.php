@@ -41,7 +41,8 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{tweet}', [TweetController::class, 'destroy'])->name('destroy');
             // like and unlike
             Route::post('/{tweet}/like', [TweetController::class, 'like'])->name('like');
-            Route::delete('/{tweet}/unlike', [TweetController::class, 'unlike'])->name('unlike');
+            // comment
+            Route::post('/{tweet}/comment', [TweetController::class, 'comment'])->name('comment');
         });
     });
 

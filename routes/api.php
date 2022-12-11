@@ -32,7 +32,7 @@ POST /v1/tweets/{tweet_id}/reply- replies to a tweet
 */
 
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum',"isAPI"]], function () {
     Route::group(['prefix' => 'v1'], function () {
         Route::get('/me', [ProfileController::class, 'me']);
         Route::get('/me/following', [ProfileController::class, 'following']);

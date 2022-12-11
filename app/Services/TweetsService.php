@@ -97,7 +97,7 @@ class TweetsService
             ->comments()
             ->create([
                 'user_id' => $user_id,
-                'comment' => $comment
+                'body' => $comment
             ]);
     }
 

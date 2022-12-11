@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Comment extends Model
 {
     use HasFactory;
+    public $fillable = ['user_id', 'tweet_id', 'body'];
 
     // comment belongs to user
     public function user()
