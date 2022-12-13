@@ -28,8 +28,8 @@ Route::middleware('auth')->group(function () {
 
 
     Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get("/{username}",[ProfileController::class,"show"])->name("show")->where("username","[a-zA-Z0-9]+");
         Route::get('/profile', [ProfileController::class, 'edit'])->name('edit');
+        Route::get("/{username}",[ProfileController::class,"show"])->name("show")->where("username","[a-zA-Z0-9]+");
         Route::patch('/profile', [ProfileController::class, 'update'])->name('update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('destroy');
         // user follow/unfollow
