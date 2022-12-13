@@ -25,9 +25,22 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get("/{username}",[ProfileController::class,"show"])->name("show")->where("username","[a-zA-Z0-9]+");
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('destroy');
+        // user follow/unfollow
+        Route::post('/{username}/follow', [ProfileController::class, 'follow'])->name('follow');
+        Route::post('/{username}/unfollow', [ProfileController::class, 'unfollow'])->name('unfollow');
+        // followers/following
+        Route::get('/{username}/followers', [ProfileController::class, 'followers'])->name('followers');
+        Route::get('/{username}/following', [ProfileController::class, 'following'])->name('following');
+    });
+
+
 
     // tweets route group
     Route::group(['prefix' => 'tweets'], function () {
@@ -39,8 +52,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/{tweet}/edit', [TweetController::class, 'edit'])->name('edit');
             Route::patch('/{tweet}', [TweetController::class, 'update'])->name('update');
             Route::delete('/{tweet}', [TweetController::class, 'destroy'])->name('destroy');
+
             // like and unlike
             Route::post('/{tweet}/like', [TweetController::class, 'like'])->name('like');
+
             // comment
             Route::post('/{tweet}/comment', [TweetController::class, 'comment'])->name('comment');
         });

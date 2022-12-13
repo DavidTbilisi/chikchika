@@ -9,7 +9,8 @@
         </div>
         <div>
             <h5 class="font-bold mb-4">
-                <a href="tweets/{{$tweet->id}}">Posted</a> by: <b><a href="user/{{$tweet->user->id}}"> {{ $tweet->user->name }}</a></b>
+                <a href="{{route("tweets.show", ["tweet"=>$tweet->id])}}">Posted</a> by:
+                <b><a href="{{route("profile.show",["username"=> $tweet->user->name])}}"> {{ $tweet->user->name }}</a></b>
             </h5>
             <p class="text-sm">
                 {{ $tweet->body }}
@@ -21,7 +22,7 @@
 
     <div class="flex p-4 border-t border-gray-300">
 {{--    like/unlike button --}}
-        <form action="/tweets/{{$tweet->id}}/like" method="POST">
+        <form action="{{route("tweets.like", ["tweet"=>$tweet->id])}}" method="POST">
             @csrf
             <div class="flex items-center mr-4 {{$tweet->isLikedBy(Auth::user()->id) ? 'text-blue-500' : 'text-gray-500'}}">
                 <button type="submit" class="text-xs mr-2">
@@ -36,7 +37,7 @@
             </a>
         </div>
         <div class="flex-1 flex items-center text-xs">
-            <a href="#">
+            <a href="{{route("tweets.show", ["tweet"=>$tweet->id])}}">
                 💬 {{ $tweet->comments->count() ?: 0 }}
             </a>
         </div>
@@ -52,7 +53,7 @@
                         <span class="inline-flex items-center">
                         <img src="https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png" alt=""
                              class="rounded-full mr-2" width="50" height="50">
-                        <b> {{ $comment->user->name }}</b> <span class="text-gray-400"> - {{ $comment->created_at->diffForHumans() }} - </span>
+                        <b> <a href="{{route("profile.show", ["username"=> $comment->user->name])}}"> {{ $comment->user->name }}</a></b> <span class="text-gray-400"> - {{ $comment->created_at->diffForHumans() }} - </span>
                         {{ $comment->body }}
                         </span>
                     </a>

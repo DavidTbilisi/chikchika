@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,23 +13,12 @@ use Illuminate\Support\Facades\Redirect;
 class ProfileController extends Controller
 {
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function me()    :JsonResponse
     {
         return response()->json(auth()->user());
     }
 
-    /**
-     * Display the user's profile form.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
-     */
+
     public function edit(Request $request)
     {
         return view('profile.edit', [
@@ -37,14 +27,9 @@ class ProfileController extends Controller
     }
 
 
-    /**
-     * Update the user's profile information.
-     *
-     * @param  \App\Http\Requests\ProfileUpdateRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update(ProfileUpdateRequest $request)
     {
+
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -56,12 +41,7 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
+
     public function destroy(Request $request)
     {
         $request->validateWithBag('userDeletion', [
@@ -80,28 +60,46 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function following( Request $request ): JsonResponse
+
+    public function following( UserService $user, $username )
     {
-        $user = User::find( $request->user()->id );
-        $following = $user->following()->get();
-        return response()->json( $following );
+        $user = $user->getUserByUsername($username);
+        $following = $user->isFollowing()->get();
+        return view('profile.follow', compact('user', 'following'));
+
     }
 
-    public function followers( Request $request ): JsonResponse
+    public function followers( UserService $user, $username)
     {
-        $user = User::find( $request->user()->id );
-        $followers = $user->followers()->get();
-        return response()->json( $followers );
+        $user = $user->getUserByUsername($username);
+        $followers = $user->isFollowedBy()->get();
+        return view('profile.follow', compact('user', 'followers'));
     }
 
-
+    // TODO: Code bellow move to service
     public function show( $name )
     {
         $user = User::where( 'name', $name )
-            ->with(['tweets', 'following', 'followers', 'likes', 'comments'])
+            ->with(['tweets', 'isFollowing', 'isFollowedBy', 'likes', 'comments'])
             ->first();
         return view( 'profile.show', ['user' => $user] );
     }
 
+
+    // follow user
+    public function follow( Request $request, $name )
+    {
+        $user = User::where( 'name', $name )->first();
+        $request->user()->isFollowing()->attach( $user );
+        return redirect()->back();
+    }
+
+    // unfollow user
+    public function unfollow( Request $request, $name )
+    {
+        $user = User::where( 'name', $name )->first();
+        $request->user()->isFollowing()->detach( $user->id );
+        return redirect()->back();
+    }
 }
 

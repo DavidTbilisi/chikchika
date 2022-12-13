@@ -18,6 +18,17 @@
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
+
+        <div>
+            <x-input-label for="privacy" :value="__('Privacy')" />
+               <select name="privacy" id="privacy" class="mt-1 block w-full">
+                    <option value="public" {{ $user->privacy == 'public' ? 'selected' : '' }}>Public</option>
+                    <option value="private" {{ $user->privacy == 'private' ? 'selected' : '' }}>Private</option>
+                </select>
+            <x-input-error class="mt-2" :messages="$errors->get('privacy')" />
+        </div>
+
+
         <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="email" />

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -18,6 +18,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'privacy'
     ];
 
     protected $hidden = [
@@ -25,11 +26,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
@@ -52,17 +48,6 @@ class User extends Authenticatable
         return $this->hasMany(Like::class);
     }
 
-    // user has many followers
-    public function followers(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_user_id');
-    }
-
-    // user has many following
-    public function following(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'follows', 'user_id', 'follow_user_id');
-    }
 
     public function isFollowing(): BelongsToMany
     {
@@ -71,7 +56,12 @@ class User extends Authenticatable
 
     public function isFollowedBy(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_user_id');
+        return $this->belongsToMany(User::class, 'follows', 'follow_user_id', 'user_id');
+    }
+
+    public function isFollowingUser($user_id)
+    {
+        return $this->isFollowing()->where('follow_user_id', $user_id)->exists();
     }
 
 }

@@ -21,7 +21,6 @@ class DatabaseSeeder extends Seeder
             TweetsSeeder::class,
             CommentsSeeder::class,
             LikesSeeder::class,
-            FollowersSeeder::class,
             FollowingSeeder::class,
         ]);
     }

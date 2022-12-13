@@ -16,9 +16,14 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('tweets.create')" :active="request()->routeIs('tweets.create')">
+                        {{ __('Create Tweet') }}
+                    </x-nav-link>
+
                     <x-nav-link :href="route('tokens.create', ['token_name'=>'temp'])" :active="request()->routeIs('tokens.create')">
                         {{ __('Create Token') }}
                     </x-nav-link>
+
                 </div>
             </div>
 
@@ -38,8 +43,12 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <x-dropdown-link :href="route('profile.show', ['username'=>Auth::user()->name])">
+                            {{ __('User Profile') }}
+                        </x-dropdown-link>
+
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('Edit Profile') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->

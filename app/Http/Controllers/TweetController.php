@@ -18,7 +18,8 @@ class TweetController extends Controller
 
     public function create()
     {
-        //
+        // return show tweet create form
+        return view('tweets.create');
     }
 
 
