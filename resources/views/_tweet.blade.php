@@ -9,7 +9,7 @@
         </div>
         <div>
             <h5 class="font-bold mb-4">
-                <a href="tweets/{{$tweet->id}}">Chikchiked</a> by: <b><a href="user/{{$tweet->user->id}}"> {{ $tweet->user->name }}</a></b>
+                <a href="tweets/{{$tweet->id}}">Posted</a> by: <b><a href="user/{{$tweet->user->id}}"> {{ $tweet->user->name }}</a></b>
             </h5>
             <p class="text-sm">
                 {{ $tweet->body }}
