@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Following;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,6 +20,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             TweetsSeeder::class,
             CommentsSeeder::class,
+            LikesSeeder::class,
+            FollowersSeeder::class,
+            FollowingSeeder::class,
         ]);
     }
 }

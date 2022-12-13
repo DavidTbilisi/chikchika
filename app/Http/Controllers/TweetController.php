@@ -74,7 +74,7 @@ class TweetController extends Controller
             $tweetsService->likeTweet($user_id, $tweet->id);
         }
 
-        return redirect()->route('tweets.show', $tweet);
+        return redirect()->back();
     }
 
     public function comment(TweetsService $tweetsService, Tweet $tweet)
@@ -84,7 +84,7 @@ class TweetController extends Controller
         $validated = request()->validate([
             'body' => 'required|max:144',
         ]);
-        $tweetsService->commentTweet($user_id, $tweet->id, request('body'));
+        $tweetsService->commentTweet($user_id, $tweet->id, $validated['body']);
 
         return redirect()->route('tweets.show', $tweet);
     }

@@ -95,6 +95,13 @@ class ProfileController extends Controller
     }
 
 
+    public function show( $name )
+    {
+        $user = User::where( 'name', $name )
+            ->with(['tweets', 'following', 'followers', 'likes', 'comments'])
+            ->first();
+        return view( 'profile.show', ['user' => $user] );
+    }
 
 }
 
