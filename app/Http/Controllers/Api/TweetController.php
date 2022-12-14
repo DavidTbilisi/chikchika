@@ -11,18 +11,9 @@ use Illuminate\Http\Request;
 class TweetController extends Controller
 {
     // create Tweet
-    public function store(Request $request)
+    public function store(TweetsService $tweetsService)
     {
-        // validate tweet body
-        $validated = $request->validate([
-            'body' => 'required|max:144',
-        ]);
-
-        $tweet = new Tweet();
-        $tweet->user_id = auth()->user()->id;
-        $tweet->body = $validated['body'];
-        $tweet->save();
-
+       $tweet = $tweetsService->createTweet();
         return response()->json($tweet, 201);
     }
 

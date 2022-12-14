@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FeedController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TweetController;
 use Illuminate\Support\Facades\Route;
@@ -19,15 +20,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    $user_id = auth()->user()->id;
-    return view('dashboard',["tweets"=>(new App\Services\TweetsService)->getTweets($user_id)] );
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
-    Route::prefix('profile')->name('profile.')->group(function () {
+    Route::prefix('usr')->name('profile.')->group(function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('edit');
-        Route::get("/{username}",[ProfileController::class,"show"])->name("show")->where("username","[a-zA-Z0-9]+");
         Route::patch('/profile', [ProfileController::class, 'update'])->name('update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('destroy');
         // user follow/unfollow
@@ -36,28 +31,27 @@ Route::middleware('auth')->group(function () {
         // followers/following
         Route::get('/{username}/followers', [ProfileController::class, 'followers'])->name('followers')->where("username","[a-zA-Z0-9]+");
         Route::get('/{username}/following', [ProfileController::class, 'following'])->name('following')->where("username","[a-zA-Z0-9]+");
+        Route::get('/dashboard', [FeedController::class, 'dashboard'])->name('dashboard');
     });
-
-
 
     // tweets route group
     Route::group(['prefix' => 'tweets'], function () {
         Route::name("tweets.")->group(function () {
-            Route::get('/', [TweetController::class, 'index'])->name('index');
+
+            Route::get('/home', [TweetController::class, 'index'])->name('index');
             Route::get('/create', [TweetController::class, 'create'])->name('create');
-            Route::post('/', [TweetController::class, 'store'])->name('store');
-            Route::get('/{tweet}', [TweetController::class, 'show'])->name('show');
+            Route::post('/save', [TweetController::class, 'store'])->name('store');
+
             Route::get('/{tweet}/edit', [TweetController::class, 'edit'])->name('edit');
-            Route::patch('/{tweet}', [TweetController::class, 'update'])->name('update')->where("[0-9]+");
-            Route::delete('/{tweet}', [TweetController::class, 'destroy'])->name('destroy')->where("[0-9]+");;
+            Route::post('/{tweet}/like', [TweetController::class, 'like'])->name('like')->where("tweet","[0-9]+");
+            Route::post('/{tweet}/comment', [TweetController::class, 'comment'])->name('comment')->where("tweet","[0-9]+");
 
-            // like and unlike
-            Route::post('/{tweet}/like', [TweetController::class, 'like'])->name('like')->where("[0-9]+");
-
-            // comment
-            Route::post('/{tweet}/comment', [TweetController::class, 'comment'])->name('comment')->where("[0-9]+");
+            Route::patch('/{tweet}', [TweetController::class, 'update'])->name('update')->where("tweet","[0-9]+");
+            Route::delete('/{tweet}', [TweetController::class, 'destroy'])->name('destroy')->where("tweet","[0-9]+");
+            Route::get('/{tweet}', [TweetController::class, 'show'])->name('show')->where("tweet","[0-9]+");
         });
     });
+
 
     Route::get('/tokens/create', function (Request $request) {
         $token = $request->user()->createToken($request->token_name);
@@ -65,7 +59,12 @@ Route::middleware('auth')->group(function () {
     })->name('tokens.create');
 
 
-
 });
 
+
 require __DIR__.'/auth.php';
+
+Route::get("/{username}",[ProfileController::class,"show"])
+    ->name("username")
+    ->where("username","[a-zA-Z0-9]+")
+    ->middleware(["auth","verified"]);

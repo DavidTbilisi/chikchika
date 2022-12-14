@@ -10,7 +10,7 @@
         <div>
             <h5 class="font-bold mb-4">
                 <a href="{{route("tweets.show", ["tweet"=>$tweet->id])}}">Posted</a> by:
-                <b><a href="{{route("profile.show",["username"=> $tweet->user->name])}}"> {{ $tweet->user->name }}</a></b>
+                <b><a href="{{route("username",["username"=> $tweet->user->name])}}"> {{ $tweet->user->name }}</a></b>
             </h5>
             <p class="text-sm">
                 {{ $tweet->body }}
@@ -53,7 +53,7 @@
                         <span class="inline-flex items-center">
                         <img src="https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png" alt=""
                              class="rounded-full mr-2" width="50" height="50">
-                        <b> <a href="{{route("profile.show", ["username"=> $comment->user->name])}}"> {{ $comment->user->name }}</a></b> <span class="text-gray-400"> - {{ $comment->created_at->diffForHumans() }} - </span>
+                        <b> <a href="{{route("username", ["username"=> $comment->user->name])}}"> {{ $comment->user->name }}</a></b> <span class="text-gray-400"> - {{ $comment->created_at->diffForHumans() }} - </span>
                         {{ $comment->body }}
                         </span>
                     </a>

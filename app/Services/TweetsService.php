@@ -49,11 +49,16 @@ class TweetsService
             ->first();
     }
 
-    public function createTweet($user_id, $tweet)
+    public function createTweet()
     {
+        // validate tweet body
+        $validated = request()->validate([
+            'body' => 'required|max:144',
+        ]);
+
         return Tweet::create([
-            'user_id' => $user_id,
-            'tweet' => $tweet
+            'user_id' => auth()->user()->id,
+            'body' => $validated['body'],
         ]);
     }
 
@@ -61,7 +66,7 @@ class TweetsService
     {
         return Tweet::where('id', $tweet_id)
             ->update([
-                'tweet' => $tweet
+                'body' => $tweet
             ]);
     }
 

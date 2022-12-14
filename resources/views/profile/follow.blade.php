@@ -17,7 +17,7 @@
                     @foreach($user->isFollowing as $following)
                         <div class="flex p-4">
                             <div class="flex-1 flex items-center text-xs">
-                                <a href="{{route("profile.show", ["username"=>$following->name])}}">
+                                <a href="{{route("username", ["username"=>$following->name])}}">
                                     <span class="inline-flex items-center">
                                         <b> {{$following->name}}</b>
                                     </span>
