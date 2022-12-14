@@ -91,7 +91,11 @@ class TweetsService
                 'user_id' => $user_id
             ]);
 
-        Notification::send(auth()->user(), new TweetLiked($tweet, $user_id));
+        $tweet_author = Tweet::where('id', $tweet_id)
+            ->first()
+            ->user;
+
+        $tweet_author->notify(new TweetLiked($tweet, $user_id));
 
         return $tweet;
     }
@@ -107,15 +111,23 @@ class TweetsService
 
     public function commentTweet($user_id, $tweet_id, $comment)
     {
-        $commented = Tweet::where('id', $tweet_id)
-            ->first()
-            ->comments()
+
+        $tweet = Tweet::where('id', $tweet_id)
+            ->first();
+
+        $commented = $tweet->comments()
             ->create([
                 'user_id' => $user_id,
                 'body' => $comment
             ]);
 
-        Notification::send(auth()->user(), new TweetCommented( $user_id, $commented));
+//        Notification::send(auth()->user(), new TweetCommented( $user_id, $commented));
+
+        $tweet_author = Tweet::where('id', $tweet_id)
+             ->first()
+             ->user;
+
+        $tweet_author->notify(new TweetCommented( $user_id, $tweet ));
         return $commented;
 
     }

@@ -15,22 +15,16 @@
                     @foreach($user->notifications as $notification)
                         <div class="flex p-4">
                             <div class="flex-1 flex items-center text-xs">
-                                <a href="{{route("username", ["username"=>$notification->data['user']['name']])}}">
-                                    <span class="inline-flex items-center">
-                                        <b> {{$notification->data['user']['name']}}</b>
-                                    </span>
-                                </a>
-                                -
-                                <span class="inline-flex items-center">
-                                    <b> {{$notification->data['message']}}</b>
-                                </span>
+                                @if ($notification->type === 'App\Notifications\TweetLiked')
+                                    @include('profile.partials.tweetliked')
+                                @endif
+
+                                @if($notification->type === 'App\Notifications\WeeklyNotification')
+                                    @include('profile.partials.weeklynotification')
+                                @endif
 
                                 @if($notification->type == "App\Notifications\TweetCommented")
-                                    <a href="{{route("tweets.show", ["tweet"=>$notification->data['tweet']['id']])}}">
-                                        <span class="inline-flex items-center text-blue-900 ml-2">
-                                             {{$notification->data['tweet']['body']}}
-                                        </span>
-                                    </a>
+                                    @include('profile.partials.tweetcommented')
                                 @endif
 
                                 <span class="inline-flex items-center text-gray-500 ml-4">
