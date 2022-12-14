@@ -25,19 +25,17 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-
-
     Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get("/{username}",[ProfileController::class,"show"])->name("show")->where("username","[a-zA-Z0-9]+");
         Route::get('/profile', [ProfileController::class, 'edit'])->name('edit');
+        Route::get("/{username}",[ProfileController::class,"show"])->name("show")->where("username","[a-zA-Z0-9]+");
         Route::patch('/profile', [ProfileController::class, 'update'])->name('update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('destroy');
         // user follow/unfollow
-        Route::post('/{username}/follow', [ProfileController::class, 'follow'])->name('follow');
-        Route::post('/{username}/unfollow', [ProfileController::class, 'unfollow'])->name('unfollow');
+        Route::post('/{username}/follow', [ProfileController::class, 'follow'])->name('follow')->where("username","[a-zA-Z0-9]+");
+        Route::post('/{username}/unfollow', [ProfileController::class, 'unfollow'])->name('unfollow')->where("username","[a-zA-Z0-9]+");
         // followers/following
-        Route::get('/{username}/followers', [ProfileController::class, 'followers'])->name('followers');
-        Route::get('/{username}/following', [ProfileController::class, 'following'])->name('following');
+        Route::get('/{username}/followers', [ProfileController::class, 'followers'])->name('followers')->where("username","[a-zA-Z0-9]+");
+        Route::get('/{username}/following', [ProfileController::class, 'following'])->name('following')->where("username","[a-zA-Z0-9]+");
     });
 
 
@@ -50,14 +48,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [TweetController::class, 'store'])->name('store');
             Route::get('/{tweet}', [TweetController::class, 'show'])->name('show');
             Route::get('/{tweet}/edit', [TweetController::class, 'edit'])->name('edit');
-            Route::patch('/{tweet}', [TweetController::class, 'update'])->name('update');
-            Route::delete('/{tweet}', [TweetController::class, 'destroy'])->name('destroy');
+            Route::patch('/{tweet}', [TweetController::class, 'update'])->name('update')->where("[0-9]+");
+            Route::delete('/{tweet}', [TweetController::class, 'destroy'])->name('destroy')->where("[0-9]+");;
 
             // like and unlike
-            Route::post('/{tweet}/like', [TweetController::class, 'like'])->name('like');
+            Route::post('/{tweet}/like', [TweetController::class, 'like'])->name('like')->where("[0-9]+");
 
             // comment
-            Route::post('/{tweet}/comment', [TweetController::class, 'comment'])->name('comment');
+            Route::post('/{tweet}/comment', [TweetController::class, 'comment'])->name('comment')->where("[0-9]+");
         });
     });
 

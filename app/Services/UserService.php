@@ -24,11 +24,12 @@ class UserService
             ->delete();
     }
 
-    //
     public function getUserByUsername($username)
     {
         return User::where('name', $username)->firstOrFail();
     }
+
+
 
 
 }
