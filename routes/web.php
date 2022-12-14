@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function () {
         // followers/following
         Route::get('/{username}/followers', [ProfileController::class, 'followers'])->name('followers')->where("username","[a-zA-Z0-9]+");
         Route::get('/{username}/following', [ProfileController::class, 'following'])->name('following')->where("username","[a-zA-Z0-9]+");
+        // get notifications
+        Route::get('/notifications', [ProfileController::class, 'notifications'])->name('notifications');
         Route::get('/dashboard', [FeedController::class, 'dashboard'])->name('dashboard');
     });
 

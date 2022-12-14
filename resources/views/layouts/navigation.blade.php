@@ -20,6 +20,10 @@
                         {{ __('Create Tweet') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('profile.notifications')" :active="request()->routeIs('profile.notifications')">
+                        {{ __('Notifications') }}
+                    </x-nav-link>
+
                     <x-nav-link :href="route('tokens.create', ['token_name'=>'temp'])" :active="request()->routeIs('tokens.create')">
                         {{ __('Create Token') }}
                     </x-nav-link>

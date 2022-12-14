@@ -2,6 +2,10 @@
 namespace App\Services;
 
 use App\Models\Tweet;
+use App\Notifications\TweetCommented;
+use App\Notifications\TweetLiked;
+use Illuminate\Support\Facades\Notification;
+
 
 class TweetsService
 {
@@ -56,10 +60,12 @@ class TweetsService
             'body' => 'required|max:144',
         ]);
 
-        return Tweet::create([
+        $tweet = Tweet::create([
             'user_id' => auth()->user()->id,
             'body' => $validated['body'],
         ]);
+
+        return $tweet;
     }
 
     public function updateTweet($tweet_id, $tweet)
@@ -78,12 +84,16 @@ class TweetsService
 
     public function likeTweet($user_id, $tweet_id)
     {
-        return Tweet::where('id', $tweet_id)
+        $tweet = Tweet::where('id', $tweet_id)
             ->first()
             ->likes()
             ->create([
                 'user_id' => $user_id
             ]);
+
+        Notification::send(auth()->user(), new TweetLiked($tweet, $user_id));
+
+        return $tweet;
     }
 
     public function unlikeTweet($user_id, $tweet_id)
@@ -97,13 +107,17 @@ class TweetsService
 
     public function commentTweet($user_id, $tweet_id, $comment)
     {
-        return Tweet::where('id', $tweet_id)
+        $commented = Tweet::where('id', $tweet_id)
             ->first()
             ->comments()
             ->create([
                 'user_id' => $user_id,
                 'body' => $comment
             ]);
+
+        Notification::send(auth()->user(), new TweetCommented( $user_id, $commented));
+        return $commented;
+
     }
 
     public function deleteComment($comment_id, $tweet_id)
