@@ -4,19 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
+use App\Notifications\UserFollowed;
+use App\Notifications\UserUnfollowed;
 use App\Services\UserService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
 
 class ProfileController extends Controller
 {
-
-    public function me()    :JsonResponse
-    {
-        return response()->json(auth()->user());
-    }
 
 
     public function edit(Request $request)
@@ -76,7 +73,7 @@ class ProfileController extends Controller
         return view('profile.follow', compact('user', 'followers'));
     }
 
-    // TODO: Code bellow move to service
+    // TODO: Code bellow should be moved to service
     public function show( $name )
     {
         $user = User::where( 'name', $name )
@@ -91,6 +88,9 @@ class ProfileController extends Controller
     {
         $user = User::where( 'name', $name )->first();
         $request->user()->isFollowing()->attach( $user );
+
+        Notification::send($user, new UserFollowed($request->user()));
+
         return redirect()->back();
     }
 
@@ -99,7 +99,16 @@ class ProfileController extends Controller
     {
         $user = User::where( 'name', $name )->first();
         $request->user()->isFollowing()->detach( $user->id );
+        Notification::send($user, new UserUnfollowed($request->user()));
+
         return redirect()->back();
+    }
+
+    // notifications
+    public function notifications( Request $request )
+    {
+        $user = $request->user();
+        return view( 'profile.notifications', compact( 'user' ) );
     }
 }
 

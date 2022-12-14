@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\FeedController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TweetController;
+use App\Http\Controllers\Api\FeedController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\TweetController;
+use App\Http\Middleware\IsAPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,22 +33,20 @@ POST /v1/tweets/{tweet_id}/reply- replies to a tweet
 */
 
 
-Route::group(['middleware' => ['auth:sanctum',"isAPI"]], function () {
+Route::group(['middleware' => ['auth:sanctum',isAPI::class]], function () {
     Route::group(['prefix' => 'v1'], function () {
         Route::get('/me', [ProfileController::class, 'me']);
         Route::get('/me/following', [ProfileController::class, 'following']);
         Route::get('/me/followers', [ProfileController::class, 'followers']);
-        Route::get('/tweets', [FeedController::class, 'index']);
-        Route::get('/tweets/{tweet}', [FeedController::class, 'show']);
-        Route::get('/tweets/{tweet}/replies', [FeedController::class, 'replies']);
+        Route::get('/tweets', [TweetController::class, 'newsFeed']); // news feed
+        Route::get('/tweets/{tweet}', [TweetController::class, 'show']);
+        Route::get('/tweets/{tweet}/replies', [TweetController::class, 'comments']);
 
-        // TODO:: ღიირს კი ერთი მეთოდისთვის კონტროლერის შექმნა?
         Route::post('/tweets', [TweetController::class, 'store']);
 
-        Route::post('/tweets/{tweet}/reply', [FeedController::class, 'reply']);
-        Route::post('/tweets/{tweet}/like', [FeedController::class, 'like']);
-
-        Route::delete('/tweets/{tweet}/unlike', [FeedController::class, 'unlike']);
+        Route::post('/tweets/{tweet}/reply', [TweetController::class, 'comment']);
+        Route::post('/tweets/{tweet}/like', [TweetController::class, 'like']);
+        Route::delete('/tweets/{tweet}/unlike', [TweetController::class, 'unlike']);
     });
 });
 

@@ -4,39 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Tweet;
 use App\Services\TweetsService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TweetController extends Controller
 {
 
-    public function index()
-    {
-        //
-    }
-
 
     public function create()
     {
-        // return show tweet create form
         return view('tweets.create');
     }
 
 
-    public function store(Request $request)
+    public function store(TweetsService $tweetsService)
     {
-        // validate tweet body
-        $validated = $request->validate([
-            'body' => 'required|max:144',
-        ]);
-
-        $tweet = new Tweet();
-        $tweet->user_id = auth()->user()->id;
-        $tweet->body = $validated['body'];
-        $tweet->save();
-        if ($request->isAPI) {
-            return response()->json($tweet, 201);
-        }
+        $tweet = $tweetsService->createTweet();
         return redirect()->route('tweets.show', $tweet);
     }
 
